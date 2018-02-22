@@ -145,6 +145,7 @@ var config = {
         filename: '[name].[contenthash].js',
         chunkFilename: '[name].[contenthash].js',
     },
+    node: {fs: 'empty'},
     module: {
         rules: [
             {

@@ -7,6 +7,7 @@
   "private": true,
   "dependencies": {
     "@babel/polyfill": "7.2.5",
+    "@tanker/client-browser": "1.10.0",
     "bootstrap": "3.3.7",
     "bootstrap-colorpicker": "2.5.2",
     "chart.js": "2.7.3",
@@ -29,7 +30,7 @@
     "localforage": "1.7.3",
     "localforage-observable": "1.4.0",
     "marked": "github:mattermost/marked#ed33baecd7d7fa97d479ba22dde9d226b083d67d",
-    "mattermost-redux": "github:mattermost/mattermost-redux#a8d240b0d464d1e467a04bb9bacac710342e9c8a",
+    "mattermost-redux": "github:TankerHQ/mattermost-redux",
     "moment-timezone": "0.5.23",
     "pdfjs-dist": "2.0.489",
     "perfect-scrollbar": "0.8.1",
