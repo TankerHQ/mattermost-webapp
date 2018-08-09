@@ -41,7 +41,9 @@ class PasswordResetForm extends React.Component {
         });
 
         resetPassword(
+            (new URLSearchParams(this.props.location.search)).get('email'),
             (new URLSearchParams(this.props.location.search)).get('token'),
+            (new URLSearchParams(this.props.location.search)).get('validation'),
             password,
             () => {
                 this.setState({error: null});
