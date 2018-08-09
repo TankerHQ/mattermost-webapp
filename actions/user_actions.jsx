@@ -421,8 +421,8 @@ export async function verifyEmail(token, success, error) {
     }
 }
 
-export async function resetPassword(token, password, success, error) {
-    const {data, error: err} = await UserActions.resetUserPassword(token, password)(dispatch, getState);
+export async function resetPassword(token, validation, password, success, error) {
+    const {data, error: err} = await UserActions.resetUserPassword(token, validation, password)(dispatch, getState);
     if (data) {
         browserHistory.push('/login?extra=' + Constants.PASSWORD_CHANGE);
         if (success) {
