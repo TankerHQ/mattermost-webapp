@@ -26,19 +26,19 @@ import {ActionTypes} from 'utils/constants';
 export function completePostReceive(post, websocketMessageProps) {
     return async (dispatch, getState) => {
         const state = getState();
-
+        const clearPost = await PostActions.decryptPost(post)(dispatch, getState);
         const rootPost = PostSelectors.getPost(state, post.root_id);
         const postsInChannel = PostSelectors.getPostIdsInChannel(getState(), post.channel_id);
         if (post.root_id && !rootPost && postsInChannel && postsInChannel.length !== 0) {
             const {data: posts} = await dispatch(PostActions.getPostThread(post.root_id));
             if (posts) {
-                dispatch(lastPostActions(post, websocketMessageProps));
+                dispatch(lastPostActions(clearPost, websocketMessageProps));
             }
 
             return;
         }
 
-        dispatch(lastPostActions(post, websocketMessageProps));
+        dispatch(lastPostActions(clearPost, websocketMessageProps));
     };
 }
 
@@ -55,7 +55,6 @@ export function lastPostActions(post, websocketMessageProps) {
         }
 
         // Need manual dispatch to remove pending post
-
         const actions = [{
             type: PostTypes.RECEIVED_NEW_POST,
             data: {
