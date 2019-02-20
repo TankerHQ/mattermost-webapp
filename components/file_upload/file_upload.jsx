@@ -238,7 +238,7 @@ export default class FileUpload extends PureComponent {
         }
     }
 
-    uploadFiles = (sortedFiles) => {
+    uploadFiles = async (sortedFiles) => {
         const {currentChannelId, rootId} = this.props;
 
         const uploadsRemaining = Constants.MAX_UPLOAD_FILES - this.props.fileCount;
@@ -261,13 +261,15 @@ export default class FileUpload extends PureComponent {
             // generate a unique id that can be used by other components to refer back to this upload
             const clientId = generateId();
 
-            const request = this.props.actions.uploadFile(
+            const requestFactory = await this.props.actions.uploadFile( // eslint-disable-line no-await-in-loop
                 sortedFiles[i],
                 sortedFiles[i].name,
                 currentChannelId,
                 rootId,
                 clientId,
             );
+
+            const request = requestFactory();
 
             request.on('progress', (progressEvent) => {
                 this.props.onUploadProgress({

@@ -4,7 +4,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import {OverlayTrigger, Tooltip} from 'react-bootstrap';
-import {getFileDownloadUrl} from 'mattermost-redux/utils/file_utils';
 
 import AttachmentIcon from 'components/svg/attachment_icon';
 import {trimFilename} from 'utils/file_utils';
@@ -80,10 +79,9 @@ export default class FilenameOverlay extends React.PureComponent {
         } else if (canDownload) {
             filenameOverlay = (
                 <a
-                    href={getFileDownloadUrl(fileInfo.id)}
-                    download={fileName}
+                    href='#'
+                    onClick={handleImageClick}
                     className={iconClass || 'post-image__name'}
-                    target='_blank'
                     rel='noopener noreferrer'
                 >
                     <OverlayTrigger

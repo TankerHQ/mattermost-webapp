@@ -35,43 +35,8 @@ export default class FilePreview extends React.PureComponent {
 
         this.props.fileInfos.forEach((info, idx) => {
             const type = Utils.getFileType(info.extension);
-
-            let className = 'file-preview post-image__column';
-            let previewImage;
-            if (type === FileTypes.SVG) {
-                previewImage = (
-                    <img
-                        className='post-image normal'
-                        src={getFileUrl(info.id)}
-                    />
-                );
-            } else if (type === FileTypes.IMAGE) {
-                let imageClassName = 'post-image';
-
-                if (info.width < Constants.THUMBNAIL_WIDTH && info.height < Constants.THUMBNAIL_HEIGHT) {
-                    imageClassName += ' small';
-                } else {
-                    imageClassName += ' normal';
-                }
-
-                let thumbnailUrl = getFileThumbnailUrl(info.id);
-                if (Utils.isGIFImage(info.extension) && !info.has_preview_image) {
-                    thumbnailUrl = getFileUrl(info.id);
-                }
-
-                previewImage = (
-                    <div
-                        className={imageClassName}
-                        style={{
-                            backgroundImage: `url(${thumbnailUrl})`,
-                            backgroundSize: 'cover',
-                        }}
-                    />
-                );
-            } else {
-                className += ' custom-file';
-                previewImage = <div className={'file-icon ' + Utils.getIconClassName(type)}/>;
-            }
+            const className = 'file-preview post-image__column custom-file';
+            const previewImage = <div className={'file-icon ' + Utils.getIconClassName(type)}/>;
 
             previews.push(
                 <div

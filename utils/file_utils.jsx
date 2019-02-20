@@ -41,9 +41,9 @@ export function getFileDimensionsForDisplay(dimensions, {maxHeight, maxWidth}) {
         return null;
     }
 
-    const {width, height} = dimensions;
+    const {width, height} = Object.assign({height: maxHeight, width: maxWidth}, dimensions);
     if (height <= maxHeight && width <= maxWidth) {
-        return dimensions;
+        return {width, height};
     }
     const widthRatio = width / maxWidth;
     const heightRatio = height / maxHeight;
