@@ -102,7 +102,7 @@ export default class SignupEmail extends React.Component {
     handleSignupSuccess = (user, data) => {
         trackEvent('signup', 'signup_user_02_complete');
 
-        this.props.actions.loginById(data.id, user.password, '').then(({error}) => {
+        this.props.actions.loginById(data.id, user.password, '', true).then(({error}) => {
             if (error) {
                 if (error.server_error_id === 'api.user.login.not_verified.app_error') {
                     browserHistory.push('/should_verify_email?email=' + encodeURIComponent(user.email) + '&teamname=' + encodeURIComponent(this.state.teamName));
