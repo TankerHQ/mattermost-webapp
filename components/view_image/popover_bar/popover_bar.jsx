@@ -4,6 +4,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import {FormattedMessage} from 'react-intl';
+import saveToDisk from 'file-saver';
 
 export default class PopoverBar extends React.PureComponent {
     static propTypes = {
@@ -18,6 +19,10 @@ export default class PopoverBar extends React.PureComponent {
         isExternalFile: PropTypes.bool.isRequired,
         onGetPublicLink: PropTypes.func,
         isDesktopApp: PropTypes.bool.isRequired,
+        actions: PropTypes.shape({
+            downloadFile: PropTypes.func.isRequired,
+        }).isRequired,
+
     };
 
     static defaultProps = {
@@ -28,6 +33,11 @@ export default class PopoverBar extends React.PureComponent {
         fileURL: '',
         showPublicLink: true,
     };
+
+    onDownload = async (fileURL, filename) => {
+        const file = await this.props.actions.downloadFile(fileURL);
+        saveToDisk(file, filename);
+    }
 
     render() {
         var publicLink = '';
@@ -78,11 +88,15 @@ export default class PopoverBar extends React.PureComponent {
                 <div className='image-links'>
                     {publicLink}
                     <a
-                        href={this.props.fileURL}
-                        download={this.props.filename}
+                        data-href={this.props.fileURL}
+                        data-download={this.props.filename}
                         className='text'
                         target='_blank'
                         rel='noopener noreferrer'
+                        onClick={(e) => {
+                            e.preventDefault();
+                            this.onDownload(this.props.fileURL, this.props.filename);
+                        }}
                     >
                         {downloadLinkText}
                     </a>

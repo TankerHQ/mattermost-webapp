@@ -4,14 +4,27 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import {connect} from 'react-redux';
+
+import {bindActionCreators} from 'redux';
+
 import LoadingImagePreview from 'components/loading_image_preview';
 import {loadImage} from 'utils/image_utils';
+import {downloadFileAsDataURL} from 'actions/file_actions';
 
 const WAIT_FOR_HEIGHT_TIMEOUT = 100;
 
+function mapDispatchToProps(dispatch) {
+    return {
+        actions: bindActionCreators({
+            downloadFileAsDataURL,
+        }, dispatch),
+    };
+}
+
 // SizeAwareImage is a component used for rendering images where the dimensions of the image are important for
 // ensuring that the page is laid out correctly.
-export default class SizeAwareImage extends React.PureComponent {
+class SizeAwareImage extends React.PureComponent {
     static propTypes = {
 
         /*
@@ -43,6 +56,9 @@ export default class SizeAwareImage extends React.PureComponent {
          * css classes that can added to the img as well as parent div on svg for placeholder
          */
         className: PropTypes.string,
+        actions: PropTypes.shape({
+            downloadFileAsDataURL: PropTypes.func.isRequired,
+        }).isRequired,
     }
 
     constructor(props) {
@@ -50,6 +66,7 @@ export default class SizeAwareImage extends React.PureComponent {
 
         this.state = {
             loaded: false,
+            dataURL: null,
         };
 
         this.heightTimeout = 0;
@@ -71,8 +88,12 @@ export default class SizeAwareImage extends React.PureComponent {
         this.stopWaitingForHeight();
     }
 
-    loadImage = () => {
-        const image = loadImage(this.props.src, this.handleLoad);
+    loadImage = async () => {
+        const dataURL = await this.props.actions.downloadFileAsDataURL(this.props.src);
+        this.setState({
+            dataURL,
+        });
+        const image = loadImage(dataURL, this.handleLoad);
 
         image.onerror = this.handleError;
 
@@ -139,7 +160,6 @@ export default class SizeAwareImage extends React.PureComponent {
     renderImageOrPlaceholder = () => {
         const {
             dimensions,
-            src,
             ...props
         } = this.props;
 
@@ -161,7 +181,7 @@ export default class SizeAwareImage extends React.PureComponent {
         return (
             <img
                 {...props}
-                src={src}
+                src={this.state.dataURL}
             />
         );
     }
@@ -175,3 +195,5 @@ export default class SizeAwareImage extends React.PureComponent {
         );
     }
 }
+
+export default connect(() => ({}), mapDispatchToProps)(SizeAwareImage);

@@ -15,7 +15,6 @@ export default class FileInfoPreview extends React.PureComponent {
 
     render() {
         const fileInfo = this.props.fileInfo;
-        const fileUrl = this.props.fileUrl;
 
         // non-image files include a section providing details about the file
         const infoParts = [];
@@ -31,15 +30,12 @@ export default class FileInfoPreview extends React.PureComponent {
         let preview = null;
         if (this.props.canDownloadFiles) {
             preview = (
-                <a
+                <span
                     className='file-details__preview'
-                    href={fileUrl}
-                    target='_blank'
-                    rel='noopener noreferrer'
                 >
                     <span className='file-details__preview-helper'/>
                     <img src={Utils.getFileIconPath(fileInfo)}/>
-                </a>
+                </span>
             );
         } else {
             preview = (
