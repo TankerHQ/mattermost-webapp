@@ -7,20 +7,45 @@ import {FileTypes} from 'mattermost-redux/action_types';
 import {getLogErrorAction} from 'mattermost-redux/actions/errors';
 import {forceLogoutIfNecessary} from 'mattermost-redux/actions/helpers';
 import {Client4} from 'mattermost-redux/client';
+import {decryptFile, encryptFile} from 'mattermost-redux/actions/tanker';
+import FileReader from '@tanker/file-reader';
 
 import * as Utils from 'utils/utils.jsx';
 
 export function uploadFile(file, name, channelId, rootId, clientId) {
-    return (dispatch) => {
+    return async (dispatch, getState) => {
         dispatch({type: FileTypes.UPLOAD_FILES_REQUEST});
 
-        return request.
+        const encryptedFile = await encryptFile(dispatch, getState, file, channelId);
+
+        const req = request.
             post(Client4.getFilesRoute()).
             set(Client4.getOptions({method: 'post'}).headers).
-            attach('files', file, name).
+            attach('files', encryptedFile, name).
             field('channel_id', channelId).
             field('client_ids', clientId).
             accept('application/json');
+
+        return () => req;
+    };
+}
+
+export function downloadFile(url) {
+    return async (dispatch, getState) => {
+        dispatch({type: FileTypes.UPLOAD_FILES_REQUEST});
+
+        const response = await fetch(url);
+        const encryptedFile = await response.blob();
+
+        return decryptFile(dispatch, getState, encryptedFile);
+    };
+}
+
+export function downloadFileAsDataURL(url) {
+    return async (dispatch, getState) => {
+        const file = await downloadFile(url)(dispatch, getState);
+        const reader = new FileReader(file);
+        return reader.readAsDataURL();
     };
 }
 

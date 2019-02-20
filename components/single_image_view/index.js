@@ -4,6 +4,7 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
+import {downloadFileAsDataURL} from 'actions/file_actions';
 import {toggleEmbedVisibility} from 'actions/post_actions';
 
 import {getIsRhsOpen} from 'selectors/rhs';
@@ -21,6 +22,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators({
+            downloadFileAsDataURL,
             toggleEmbedVisibility,
         }, dispatch),
     };

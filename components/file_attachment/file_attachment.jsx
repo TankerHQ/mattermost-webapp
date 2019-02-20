@@ -3,16 +3,12 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import {getFileThumbnailUrl, getFileUrl} from 'mattermost-redux/utils/file_utils';
 
-import {FileTypes} from 'utils/constants.jsx';
 import {
     trimFilename,
 } from 'utils/file_utils';
 import {
     fileSizeToString,
-    getFileType,
-    loadImage,
 } from 'utils/utils.jsx';
 
 import DownloadIcon from 'components/svg/download_icon';
@@ -46,58 +42,12 @@ export default class FileAttachment extends React.PureComponent {
         canDownloadFiles: PropTypes.bool,
     };
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            loaded: getFileType(props.fileInfo.extension) !== FileTypes.IMAGE,
-        };
-    }
-
     componentDidMount() {
         this.mounted = true;
-        this.loadFiles();
-    }
-
-    UNSAFE_componentWillReceiveProps(nextProps) { // eslint-disable-line camelcase
-        if (nextProps.fileInfo.id !== this.props.fileInfo.id) {
-            const extension = nextProps.fileInfo.extension;
-
-            this.setState({
-                loaded: getFileType(extension) !== FileTypes.IMAGE && extension !== FileTypes.SVG,
-            });
-        }
-    }
-
-    componentDidUpdate(prevProps) {
-        if (!this.state.loaded && this.props.fileInfo.id !== prevProps.fileInfo.id) {
-            this.loadFiles();
-        }
     }
 
     componentWillUnmount() {
         this.mounted = false;
-    }
-
-    loadFiles = () => {
-        const fileInfo = this.props.fileInfo;
-        const fileType = getFileType(fileInfo.extension);
-
-        if (fileType === FileTypes.IMAGE) {
-            const thumbnailUrl = getFileThumbnailUrl(fileInfo.id);
-
-            loadImage(thumbnailUrl, this.handleImageLoaded);
-        } else if (fileInfo.extension === FileTypes.SVG) {
-            loadImage(getFileUrl(fileInfo.id), this.handleImageLoaded);
-        }
-    }
-
-    handleImageLoaded = () => {
-        if (this.mounted) {
-            this.setState({
-                loaded: true,
-            });
-        }
     }
 
     onAttachmentClick = (e) => {
@@ -123,11 +73,7 @@ export default class FileAttachment extends React.PureComponent {
                     href='#'
                     onClick={this.onAttachmentClick}
                 >
-                    {this.state.loaded ? (
-                        <FileThumbnail fileInfo={fileInfo}/>
-                    ) : (
-                        <div className='post-image__load'/>
-                    )}
+                    <FileThumbnail fileInfo={fileInfo}/>
                 </a>
             );
 

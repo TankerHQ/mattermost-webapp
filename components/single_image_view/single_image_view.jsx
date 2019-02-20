@@ -23,6 +23,7 @@ export default class SingleImageView extends React.PureComponent {
         isRhsOpen: PropTypes.bool.isRequired,
         isEmbedVisible: PropTypes.bool,
         actions: PropTypes.shape({
+            downloadFileAsDataURL: PropTypes.func.isRequired,
             toggleEmbedVisibility: PropTypes.func.isRequired,
         }).isRequired,
     };
@@ -64,6 +65,20 @@ export default class SingleImageView extends React.PureComponent {
     }
 
     imageLoaded = () => {
+        if (this.mounted) {
+            this.setState({loaded: true});
+        }
+    }
+
+    loadImage = async (fileInfo) => {
+        const {has_preview_image: hasPreviewImage, id} = fileInfo;
+        const fileURL = getFileUrl(id);
+        const previewURL = hasPreviewImage ? getFilePreviewUrl(id) : fileURL;
+        const dataURL = await this.props.actions.downloadFileAsDataURL(previewURL);
+
+        if (this.imageLoaded) {
+            this.imageLoaded.src = dataURL;
+        }
         if (this.mounted) {
             this.setState({loaded: true});
         }
