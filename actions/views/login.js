@@ -9,9 +9,9 @@ export function login(loginId, password, mfaToken) {
     };
 }
 
-export function loginById(userId, password, mfaToken, isAccountCreation = false) {
+export function loginById(userId, password, mfaToken, validationCode) {
     return (dispatch) => {
-        return ignoreMfaRequiredError(dispatch(UserActions.loginById(userId, password, mfaToken, isAccountCreation)));
+        return ignoreMfaRequiredError(dispatch(UserActions.loginById(userId, password, mfaToken, validationCode)));
     };
 }
 

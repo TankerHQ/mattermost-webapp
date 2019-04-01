@@ -44,11 +44,12 @@ export default class SignupEmail extends React.Component {
 
         const data = (new URLSearchParams(this.props.location.search)).get('d');
         const token = (new URLSearchParams(this.props.location.search)).get('t');
+        const verificationCode = (new URLSearchParams(this.props.location.search)).get('v');
         const inviteId = (new URLSearchParams(this.props.location.search)).get('id');
 
         this.state = {};
         if (token && token.length > 0) {
-            this.state = this.getTokenData(token, data);
+            this.state = this.getTokenData(token, data, verificationCode);
         } else if (inviteId && inviteId.length > 0) {
             this.state = {
                 loading: true,
@@ -66,12 +67,13 @@ export default class SignupEmail extends React.Component {
         }
     }
 
-    getTokenData = (token, data) => {
+    getTokenData = (token, data, verificationCode) => {
         const parsedData = JSON.parse(data);
 
         return {
             loading: false,
             token,
+            verificationCode,
             email: parsedData.email,
             teamName: parsedData.name,
         };
@@ -102,7 +104,7 @@ export default class SignupEmail extends React.Component {
     handleSignupSuccess = (user, data) => {
         trackEvent('signup', 'signup_user_02_complete');
 
-        this.props.actions.loginById(data.id, user.password, '', true).then(({error}) => {
+        this.props.actions.loginById(data.id, user.password, '', this.state.verificationCode).then(({error}) => {
             if (error) {
                 if (error.server_error_id === 'api.user.login.not_verified.app_error') {
                     browserHistory.push('/should_verify_email?email=' + encodeURIComponent(user.email) + '&teamname=' + encodeURIComponent(this.state.teamName));
